@@ -1,6 +1,12 @@
-from tools import *
-from axes import *
-from exceptions import *
+from __future__ import absolute_import
+from builtins import zip
+from builtins import str
+from builtins import map
+from future.utils import raise_
+from past.builtins import basestring
+from .tools import *
+from .axes import *
+from .exceptions import *
 
 import sys, math, re
 from itertools import *
@@ -24,10 +30,10 @@ def function(minargs, maxargs, implicit=False, first=False, convert=None, namesp
     def decorator(f):
         def new_f(node, pos, size, context, *args):
             if len(args) < new_f.minargs:
-                raise XPathTypeError, 'too few arguments for "%s()"' % new_f.__name__
+                raise_(XPathTypeError, 'too few arguments for "%s()"' % new_f.__name__)
             if (new_f.maxargs is not None and
                 len(args) > new_f.maxargs):
-                raise XPathTypeError, 'too many arguments for "%s()"' % new_f.__name__
+                raise_(XPathTypeError, 'too many arguments for "%s()"' % new_f.__name__)
             
             if implicit and len(args) == 0:
                 args = [[node]]
@@ -88,7 +94,7 @@ def f_id(node, pos, size, context, arg):
         ids = [string(arg, context)]
     if node.nodeType != node.DOCUMENT_NODE:
         node = node.ownerDocument
-    return list(filter(None, (node.getElementById(id) for id in ids)))
+    return list([_f for _f in (node.getElementById(id) for id in ids) if _f])
 
 @function(0, 1, implicit=True, first=True)
 def f_local_name(node, pos, size, context, argnode):
@@ -138,7 +144,7 @@ def f_string(node, pos, size, context, v):
             return u'NaN'
         elif int(v) == v and v <= 0xffffffff:
             v = int(v)
-        return unicode(v)
+        return str(v)
     elif booleanp(v):
         return u'true' if v else u'false'
     return v
@@ -207,10 +213,10 @@ def f_normalize_space(node, pos, size, context, s):
 def f_translate(node, pos, size, context, s, source, target):
     # str.translate() and unicode.translate() are completely different.
     # The translate() arguments are coerced to unicode.
-    s, source, target = map(unicode, (s, source, target))
+    s, source, target = list(map(str, (s, source, target)))
     
     table = {}
-    for schar, tchar in izip(source, target):
+    for schar, tchar in zip(source, target):
         schar = ord(schar)
         if schar not in table:
             table[schar] = tchar

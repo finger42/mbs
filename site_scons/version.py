@@ -20,6 +20,7 @@
 # ----------------------------------------------------------------------- #
 
 
+from __future__ import print_function
 import argparse
 import datetime
 import os
@@ -64,7 +65,7 @@ def build_version_strings(strProjectRootPath, strGit, strMercurial, strSvnversio
                         strGitId
                     )
                     if tMatch is not None:
-                        ulRevsSinceTag = long(tMatch.group(3))
+                        ulRevsSinceTag = int(tMatch.group(3))
                         if ulRevsSinceTag==0:
                             # This is a repository which is exactly on a
                             # tag. Use the tag name.
@@ -81,7 +82,7 @@ def build_version_strings(strProjectRootPath, strGit, strMercurial, strSvnversio
                             strGitId
                         )
                         if tMatch is not None:
-                            ulRevsSinceTag = long(tMatch.group(3))
+                            ulRevsSinceTag = int(tMatch.group(3))
                             if ulRevsSinceTag==0:
                                 # This is a repository on a tag, but it has
                                 # modified files. Use the tag name and the '+'.

@@ -45,7 +45,7 @@ def artifact_action(target, source, env):
 	tNode_Project = tXmlData.documentElement.appendChild(tXmlData.createElement('Project'))
 
 	# Loop over all artifacts.
-	for (strServerID,atGroups) in aArtifacts.iteritems():
+	for (strServerID,atGroups) in list(aArtifacts.items()):
 		# Split the server ID in the 3 components.
 		aAttribServer = strServerID.split('\0')
 
@@ -55,8 +55,8 @@ def artifact_action(target, source, env):
 		tNode_Server.setAttribute('release', aAttribServer[1])
 		tNode_Server.setAttribute('snapshots', aAttribServer[2])
 
-		for (strGroupID,atFiles) in atGroups.iteritems():
-			for (strPackageID,tFileAttribs) in atFiles.iteritems():
+		for (strGroupID,atFiles) in list(atGroups.items()):
+			for (strPackageID,tFileAttribs) in list(atFiles.items()):
 				# Create a new Target node with the path to the file as
 				# 'file' attribute.
 				tNode_Target = tNode_Server.appendChild(tXmlData.createElement('Target'))
@@ -82,9 +82,9 @@ def artifact_action(target, source, env):
 def artifact_emitter(target, source, env):
 	# Loop over all elements in the 'aArtifacts' dictionary and make the
 	# target depend on them.
-	for (strServerID,atGroups) in aArtifacts.items():
-		for (strGroupID,atFiles) in atGroups.items():
-			for (strPackageID,tFileAttribs) in atFiles.items():
+	for (strServerID,atGroups) in list(aArtifacts.items()):
+		for (strGroupID,atFiles) in list(atGroups.items()):
+			for (strPackageID,tFileAttribs) in list(atFiles.items()):
 				Depends(target, tFileAttribs['file'])
 				# Combine the file name with the server, group and artifact ID.
 				aHash = [

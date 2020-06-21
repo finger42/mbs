@@ -19,6 +19,7 @@
 #   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             #
 # ----------------------------------------------------------------------- #
 
+from __future__ import print_function
 import hashlib
 import os
 import os.path
@@ -218,7 +219,7 @@ def process_package(aCfg, aTool):
 
     # Does the package have a machine placeholder?
     strPackage = aTool['package']
-    if string.find(strPackage, '${machine}') > -1:
+    if str.find(strPackage, '${machine}') > -1:
         # Get the machine name and possible alternatives.
         tPlatform = PlatformDetect()
         tPlatform.detect()

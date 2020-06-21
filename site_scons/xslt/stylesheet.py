@@ -1,11 +1,14 @@
+from __future__ import absolute_import
+from builtins import range
+from builtins import object
 from xml.dom import Node
-import core
-import properties
-import xp
-import elements
-import serializer
-from exceptions import *
-from tools import *
+from . import core
+from . import properties
+from . import xp
+from . import elements
+from . import serializer
+from .exceptions import *
+from .tools import *
 
 
 class Stylesheet(object):
@@ -45,7 +48,7 @@ class Stylesheet(object):
 			mergeNameTestLists(self.stripSpace, imp.stripSpace, self.stripSpace+self.preserveSpace)
 			mergeNameTestLists(self.preserveSpace, imp.preserveSpace, self.stripSpace+self.preserveSpace)
 			combineOutput(self.output, imp.output)
-			for key in imp.keys.values():
+			for key in list(imp.keys.values()):
 				self.addKey(key)
 		
 	def transform(self, uriOrDoc, context):
@@ -62,7 +65,7 @@ class Stylesheet(object):
 		context.nodeset = [doc]
 		context.result = result
 		
-		for i, v in self.variables.iteritems():
+		for i, v in self.variables.items():
 			v.instantiate(context)
 
 		self.applyTemplates(context, (None, None))
@@ -176,7 +179,7 @@ class Stylesheet(object):
 				
 				
 	def addKey(self, key):
-		if self.keys.has_key(key.name):
+		if key.name in self.keys:
 			self.keys[key.name].update(key)
 		else:
 			self.keys[key.name] = key
@@ -213,7 +216,7 @@ class Stylesheet(object):
 		elif template.patterns is not None:
 			patterns = template.patterns
 			mode = template.mode
-			if not self.patterns.has_key(mode):
+			if mode not in self.patterns:
 				self.patterns[mode] = []
 			self.patterns[mode] += patterns
 				

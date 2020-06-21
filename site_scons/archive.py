@@ -19,6 +19,9 @@
 #   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             #
 #-------------------------------------------------------------------------#
 
+from __future__ import print_function
+from past.builtins import basestring
+from builtins import object
 import zipfile
 
 import SCons
@@ -37,7 +40,7 @@ from SCons.Script import *
 #
 #----------------------------------------------------------------------------
 
-class ArchiveBuildInformation:
+class ArchiveBuildInformation(object):
 	def __init__(self, strArchiveType):
 		self.strArchiveType = strArchiveType
 		self.atContents = dict({})
@@ -62,19 +65,19 @@ class ArchiveBuildInformation:
 			elif isinstance(tObj, SCons.Node.FS.Base)==True:
 				aDst.append(tObj)
 			else:
-				print tObj
+				print(tObj)
 				raise Exception('Argument %d has an invalid type!' % iCnt+2)
 
 
 	def getAllSourceFiles(self):
 		# Return a list with all source files.
-		return self.atContents.values()
+		return list(self.atContents.values())
 
 
 	def getAllPathFilePairs(self):
 		# Return a list with 
 		atPathFilePairs = []
-		for strPath,atFileList in self.atContents.iteritems():
+		for strPath,atFileList in list(self.atContents.items()):
 			for tObj in atFileList:
 				atPathFilePairs.append([strPath, tObj])
 		return atPathFilePairs
@@ -85,7 +88,7 @@ class ArchiveBuildInformation:
 			# Create the target archive. This trucates an existing file.
 			tZipFile = zipfile.ZipFile(strTargetPath, 'w', zipfile.ZIP_DEFLATED)
 			# Add all source files.
-			for strPath,atFileList in self.atContents.iteritems():
+			for strPath,atFileList in list(self.atContents.items()):
 				for tObj in atFileList:
 					strSourceName = tObj.get_path()
 					strArchiveName = os.path.join(strPath, os.path.basename(strSourceName))

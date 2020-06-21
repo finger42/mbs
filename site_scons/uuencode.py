@@ -21,7 +21,7 @@
 
 import uu
 from string import Template                                                                                                                                                                                                                                                                                                
-from types import ListType
+from types import *
 
 import SCons
 import SCons.Node.FS

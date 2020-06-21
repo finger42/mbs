@@ -1,8 +1,11 @@
+from __future__ import print_function
 # Yapps 2.0 Runtime
 #
 # This module is needed to run generated parsers.
 
-from string import join, count, find, rfind
+from builtins import object
+#from string import join, count, find, rfind
+#from string import count, find, rfind
 import re
 
 class SyntaxError(Exception):
@@ -19,7 +22,7 @@ class NoMoreTokens(Exception):
     """Another exception object, for when we run out of tokens"""
     pass
 
-class Scanner:
+class Scanner(object):
     def __init__(self, patterns, ignore, input):
         """Patterns is [(terminal,regex)...]
         Ignore is [terminal,...];
@@ -101,7 +104,7 @@ class Scanner:
                 # This token should be ignored ..
                 self.pos = self.pos + best_match
 
-class Parser:
+class Parser(object):
     def __init__(self, scanner):
         self._scanner = scanner
         self._pos = 0
@@ -127,7 +130,7 @@ def print_error(input, err, scanner):
     p = err.pos
     # Figure out the line number
     line = count(input[:p], '\n')
-    print err.msg+" on line "+repr(line+1)+":"
+    print(err.msg+" on line "+repr(line+1)+":")
     # Now try printing part of the line
     text = input[max(p-80, 0):p+80]
     p = p - max(p-80, 0)
@@ -154,21 +157,21 @@ def print_error(input, err, scanner):
         p = p - 7
 
     # Now print the string, along with an indicator
-    print '> ',text
-    print '> ',' '*p + '^'
-    print 'List of nearby tokens:', scanner
+    print('> ',text)
+    print('> ',' '*p + '^')
+    print('List of nearby tokens:', scanner)
 
 def wrap_error_reporter(parser, rule):
     return_value = None
     try:
         return_value = getattr(parser, rule)()
-    except SyntaxError, s:
+    except SyntaxError as s:
         input = parser._scanner.input
         try:
             print_error(input, s, parser._scanner)
         except ImportError:
-            print 'Syntax Error',s.msg,'on line',1+count(input[:s.pos], '\n')
+            print('Syntax Error',s.msg,'on line',1+count(input[:s.pos], '\n'))
     except NoMoreTokens:
-        print 'Could not complete parsing; stopped around here:'
-        print parser._scanner
+        print('Could not complete parsing; stopped around here:')
+        print(parser._scanner)
     return return_value

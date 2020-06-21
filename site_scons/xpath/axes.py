@@ -1,4 +1,6 @@
-from exceptions import *
+from __future__ import absolute_import
+from builtins import range
+from .exceptions import *
 
 import xml.dom
 from itertools import *
@@ -81,7 +83,7 @@ def preceding(node):
 def attribute(node):
     if node.attributes is not None:
         return (node.attributes.item(i)
-                for i in xrange(node.attributes.length))
+                for i in range(node.attributes.length))
     return ()
 
 @axisfn()

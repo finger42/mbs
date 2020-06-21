@@ -1,8 +1,14 @@
-import tools
-import xp, xslt.functions
+from __future__ import print_function
+from __future__ import absolute_import
+from builtins import range
+from builtins import object
+from . import tools
+from . import xp
+import xslt.functions
 import os.path, sys
 import xml.dom.minidom
-from properties import *
+from .properties import *
+from future.utils import with_metaclass
 
 XSLT_NAMESPACE = 'http://www.w3.org/1999/XSL/Transform'
 
@@ -67,12 +73,12 @@ def fixNamespaces(node):
 	
 	if node.nodeType == xml.dom.Node.ELEMENT_NODE:
 		ns = tools.getNamespaceBindings(node)
-		if node.namespaceURI not in ns.values():
+		if node.namespaceURI not in list(ns.values()):
 			if not node.prefix is None:
 				node.setAttributeNS(xml.dom.XMLNS_NAMESPACE, 'xmlns:'+node.prefix, node.namespaceURI)
 		for i in range(node.attributes.length):
 			attr = node.attributes.item(i)
-			if attr.namespaceURI not in ns.values() and attr.namespaceURI != xml.dom.XMLNS_NAMESPACE:
+			if attr.namespaceURI not in list(ns.values()) and attr.namespaceURI != xml.dom.XMLNS_NAMESPACE:
 				node.setAttributeNS(xml.dom.XMLNS_NAMESPACE, 'xmlns:'+attr.prefix, attr.namespaceURI)
 	else:
 		for i in node.childNodes:
@@ -228,7 +234,7 @@ class TemplateContent(object):
 						if options['forwardsCompatible']:
 							e = self._ef.new('_perform_fallback', templateNode, stylesheet, options)
 						else:
-							print 'Element %s not yet implemented!' % templateNode.localName
+							print('Element %s not yet implemented!' % templateNode.localName)
 							raise NotImplemented # TODO: forwards-compatible
 				else:
 					if templateNode.namespaceURI in options['extensionElementsNS']:
@@ -272,11 +278,9 @@ class ElementFactory(object):
 		return self.new(element.localName, element, stylesheet, options)
 		
 		
-class Element(object):
+class Element(with_metaclass(tools.ClassInitializer, object)):
 	"""Base class for all XSLT Elements. Element implementors
 	should override initImpl and instantiateImpl"""
-	
-	__metaclass__ = tools.ClassInitializer
 	@staticmethod
 	def _init_class(cls, name, bases, dict):
 		if dict.get('name') is not None: cls.classDict[dict.get('name')] = cls

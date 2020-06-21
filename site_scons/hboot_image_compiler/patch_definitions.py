@@ -20,6 +20,7 @@
 # *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
 # ***************************************************************************
 
+from builtins import object
 import ast
 import xml.dom.minidom
 
@@ -54,7 +55,7 @@ class RewriteName(ast.NodeTransformer):
 # ----------------------------------------------------------------------------
 
 
-class PatchDefinitions:
+class PatchDefinitions(object):
     # This is a dictionary with all the data from the patch definition.
     m_atPatchDefinitions = None
 

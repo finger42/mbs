@@ -1,5 +1,6 @@
+from __future__ import absolute_import
 import xml.dom, re
-import xp
+from . import xp
 import xpath.exceptions
 from xslt.exceptions import *
 
@@ -104,7 +105,7 @@ def floatProperty(el, prop, default=None, required=False):
 	
 	try:
 		s = float(s) if s is not None else default
-	except ValueError, e:
+	except ValueError as e:
 		raise InvalidAttribute(el, prop, s, e)
 		
 	return s
@@ -136,7 +137,7 @@ def qnameProperty(el, prop, namespaces={}, default=None, required=False, resolve
 	
 	try:
 		s = resolveQName(s, namespaces, resolveDefault) if s is not None else None
-	except InvalidName, e:
+	except InvalidName as e:
 		raise InvalidAttribute(el, prop, e.name, e)
 	
 	return s
@@ -155,7 +156,7 @@ def qnameListProperty(el, prop, namespaces={}, default=None, required=False, res
 	
 	try:
 		g = [resolveQName(i, namespaces, resolveDefault) for i in g]
-	except InvalidName, e:
+	except InvalidName as e:
 		raise InvalidAttribute(el, prop, e.name, e)
 		
 	return g
@@ -174,7 +175,7 @@ def nameTestListProperty(el, prop, namespaces={}, default=None, required=False, 
 	
 	try:
 		g = [resolveNameTest(i, namespaces, resolveDefault) for i in g]
-	except InvalidName, e:
+	except InvalidName as e:
 		raise InvalidAttribute(el, prop, e.name, e)
 		
 	return g
@@ -225,7 +226,7 @@ def exprProperty(el, prop, default=None, required=False):
 		
 	try:
 		s = xp.XPath(s) if s is not None else None
-	except xpath.exceptions.XPathParseError, e:
+	except xpath.exceptions.XPathParseError as e:
 		raise InvalidAttribute(el, prop, s, e)
 		
 	return s
@@ -240,7 +241,7 @@ def attributeTemplateProperty(el, prop, default=None, required=False):
 		
 	try:
 		s = xp.AttributeTemplate(s) if s is not None else None
-	except xpath.exceptions.XPathParseError, e:
+	except xpath.exceptions.XPathParseError as e:
 		raise InvalidAttribute(el, prop, s, e)
 		
 	return s
@@ -255,7 +256,7 @@ def patternProperty(el, prop, default=None, required=False):
 	
 	try:
 		s = xp.Pattern(s) if s is not None else None
-	except xpath.exceptions.XPathParseError, e:
+	except xpath.exceptions.XPathParseError as e:
 		raise InvalidAttribute(el, prop, s, e)
 		
 	return s

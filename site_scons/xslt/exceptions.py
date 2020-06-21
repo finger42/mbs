@@ -1,3 +1,4 @@
+from builtins import str
 class XSLTError(Exception):
 	pass
 	
@@ -24,7 +25,7 @@ class InvalidContent(RuntimeError):
 		self.content = content
 		
 	def __unicode__(self):
-		return u"%s(%s)" % (type(self).__name__, unicode(self.content))
+		return u"%s(%s)" % (type(self).__name__, str(self.content))
 	
 class UnexpectedAttribute(RuntimeError):
 	"""Raised if an attribute is generated after some content 

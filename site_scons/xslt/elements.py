@@ -1,8 +1,14 @@
-import tools, properties
-import xp
-from StringIO import StringIO
-from properties import *
-from core import *
+from __future__ import absolute_import
+from past.builtins import cmp
+from future import standard_library
+standard_library.install_aliases()
+from builtins import range
+from builtins import object
+from . import tools, properties
+from . import xp
+from io import StringIO
+from .properties import *
+from .core import *
 
 		
 class LiteralText(Element):
@@ -64,7 +70,7 @@ class LiteralElement(Element):
 		for attrSet in self.useSets:
 			ss.instantiateAttributeSet(context, attrSet)
 			
-		for (k, v) in self.attrs.iteritems():
+		for (k, v) in self.attrs.items():
 			if k[2] == xml.dom.XMLNS_NAMESPACE:
 				e.setAttributeNS(k[2], 'xmlns:%s'%k[1], ss.getNamespaceAlias(v.value(context)))
 			else:
@@ -79,8 +85,7 @@ class PerformFallback(Element):
 	name = '_perform_fallback'
 	
 	def initImpl(self, element, stylesheet, options):
-		fallbacks = filter(lambda x: x.namespaceURI == XSLT_NAMESPACE and x.localName == 'fallback', 
-							childElements(element))
+		fallbacks = [x for x in childElements(element) if x.namespaceURI == XSLT_NAMESPACE and x.localName == 'fallback']
 		self.setContent(fallbacks, stylesheet, options)
 			
 	def instantiateImpl(self, context):
@@ -444,7 +449,7 @@ class Copy(Element):
 		r = context.resultDocument.importNode(context.node, False)
 		if r.nodeType == xml.dom.Node.ELEMENT_NODE:
 			# don't copy attrs except xmlns
-			for i in reversed(range(r.attributes.length)):
+			for i in reversed(list(range(r.attributes.length))):
 				attr = r.attributes.item(i)
 				if attr.namespaceURI == xml.dom.XMLNS_NAMESPACE:
 					if attr.value in options['excludeResultNS']:

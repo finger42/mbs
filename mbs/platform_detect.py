@@ -19,6 +19,9 @@
 #   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             #
 # ----------------------------------------------------------------------- #
 
+from __future__ import print_function
+from builtins import str
+from builtins import object
 import os
 import platform
 import re
@@ -26,7 +29,7 @@ import string
 import subprocess
 
 
-class PlatformDetect:
+class PlatformDetect(object):
     def __init__(self):
         self.strHostCpuArchitecture = None
         self.strHostDistributionId = None
@@ -37,11 +40,11 @@ class PlatformDetect:
         strEnvProcessorArchitecture = None
         strEnvProcessorArchiteW6432 = None
         if 'PROCESSOR_ARCHITECTURE' in os.environ:
-            strEnvProcessorArchitecture = string.lower(
+            strEnvProcessorArchitecture = str.lower(
                 os.environ['PROCESSOR_ARCHITECTURE']
             )
         if 'PROCESSOR_ARCHITEW6432' in os.environ:
-            strEnvProcessorArchiteW6432 = string.lower(
+            strEnvProcessorArchiteW6432 = str.lower(
                 os.environ['PROCESSOR_ARCHITEW6432']
             )
         # See here for details: https://blogs.msdn.microsoft.com/david.wang/
@@ -67,7 +70,7 @@ class PlatformDetect:
 
         # Try to parse the output of the 'getconf LONG_BIT' command.
         strOutput = subprocess.check_output(['getconf', 'LONG_BIT'])
-        strOutputStrip = string.strip(strOutput)
+        strOutputStrip = strOutput.strip()
         if strOutputStrip == '32':
             strCpuArchitecture = 'x86'
         elif strOutputStrip == '64':
@@ -85,8 +88,8 @@ class PlatformDetect:
         }
 
         # Try to parse the output of the 'lscpu' command.
-        strOutput = subprocess.check_output(['lscpu'])
-        tMatch = re.search('Architecture: *(\S+)', strOutput)
+        strOutput = str(subprocess.check_output(['lscpu']))
+        tMatch = re.search('Archit([a-z]+): *(\S+)', strOutput)
         if tMatch is None:
             raise Exception('Failed to get the CPU architecture with "lscpu".')
 
@@ -109,7 +112,7 @@ class PlatformDetect:
         for strLine in tFile:
             tMatch = re.match('DISTRIB_ID=(.+)', strLine)
             if tMatch is not None:
-                strDistributionId = string.lower(tMatch.group(1))
+                strDistributionId = (tMatch.group(1)).lower()
             tMatch = re.match('DISTRIB_RELEASE=(.+)', strLine)
             if tMatch is not None:
                 strDistributionVersion = tMatch.group(1)

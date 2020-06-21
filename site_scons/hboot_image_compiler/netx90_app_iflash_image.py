@@ -20,6 +20,10 @@
 # *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
 # ***************************************************************************
 
+from __future__ import division
+from __future__ import print_function
+from builtins import range
+from past.utils import old_div
 import array
 import hashlib
 
@@ -77,7 +81,7 @@ def patch_image(strInputFile, strOutputFile, fVerbose=False):
     # This is the complete file size except the CM4 header (448 bytes) and the
     # APP HBOOT header (64 bytes). The remaining size if converted from bytes
     # to DWORDS.
-    sizApplicationInDwords = (sizInputImage - 512) / 4
+    sizApplicationInDwords = old_div((sizInputImage - 512), 4)
     aulHBoot[4] = sizApplicationInDwords
 
     # Create a SHA384 hash over the cm4 vectors and the complete application

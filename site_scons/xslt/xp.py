@@ -1,6 +1,11 @@
+from __future__ import division
+from __future__ import absolute_import
+from builtins import str
+from builtins import object
+from past.utils import old_div
 import xpath.expr, xpath.parser
 import xpath.yappsrt, xpath.exceptions
-import tools
+from . import tools
 		
 		
 class XPathBase(object):
@@ -27,7 +32,7 @@ class XPathBase(object):
 		
 		if s not in cls._cache:
 			if len(cls._cache) >= cls._max_cache:
-				del cls._cache[0:cls._max_cache/2]
+				del cls._cache[0:old_div(cls._max_cache,2)]
 				
 			cls._cache[s] = cls.compile(s)
 			
@@ -38,7 +43,7 @@ class XPathBase(object):
 		try:
 			parser = xpath.parser.XPath(xpath.parser.XPathScanner(str(s)))
 			expr = parser.XPath()
-		except xpath.yappsrt.SyntaxError, e:
+		except xpath.yappsrt.SyntaxError as e:
 			raise xpath.exceptions.XPathParseError(str(s), e.pos, e.msg)
 		return expr
 
@@ -96,7 +101,7 @@ class Pattern(XPathBase):
 		try:
 			parser = xpath.parser.XPath(xpath.parser.XPathScanner(str(s)))
 			expr = parser.Pattern()
-		except xpath.yappsrt.SyntaxError, e:
+		except xpath.yappsrt.SyntaxError as e:
 			raise xpath.exceptions.XPathParseError(str(s), e.pos, e.msg)
 		return expr
 		
@@ -116,7 +121,7 @@ class AttributeTemplate(XPathBase):
 		try:
 			parser = xpath.parser.XPath(xpath.parser.XPathScanner(str(s)))
 			expr = parser.AttributeValueTemplate()
-		except xpath.yappsrt.SyntaxError, e:
+		except xpath.yappsrt.SyntaxError as e:
 			raise xpath.exceptions.XPathParseError(str(s), e.pos, e.msg)
 		return expr
 		

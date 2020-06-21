@@ -20,6 +20,8 @@
 # ----------------------------------------------------------------------- #
 
 
+from builtins import range
+from past.builtins import basestring
 import binascii
 import codecs
 import elf_support

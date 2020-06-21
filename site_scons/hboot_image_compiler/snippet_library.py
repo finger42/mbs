@@ -20,6 +20,9 @@
 # *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
 # ***************************************************************************
 
+from __future__ import print_function
+from builtins import str
+from builtins import object
 import hashlib
 import os
 import os.path
@@ -27,7 +30,7 @@ import sqlite3
 import xml.dom.minidom
 
 
-class SnippetLibrary:
+class SnippetLibrary(object):
     # Print debug messages.
     __fDebug = False
 
@@ -339,7 +342,7 @@ class SnippetLibrary:
         atReplace = {}
         astrMissing = []
         # Add all default values and find missing values.
-        for strName, tDefault in iter(atParameterList.items()):
+        for strName, tDefault in iter(list(atParameterList.items())):
             if tDefault is not None:
                 atReplace[strName] = tDefault
             if strName not in atParameter:
@@ -350,7 +353,7 @@ class SnippetLibrary:
         # Add all required parameters which have assigned values.
         # Find unused parameter.
         astrUnused = []
-        for strName, strValue in iter(atParameter.items()):
+        for strName, strValue in iter(list(atParameter.items())):
             if strName in atParameterList:
                 atReplace[strName] = strValue
             else:

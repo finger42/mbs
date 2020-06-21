@@ -1,9 +1,11 @@
+from __future__ import absolute_import
 # elements need to register themselves as Element subclasses
-import core
-import elements
+from builtins import object
+from . import core
+from . import elements
 
-from stylesheet import Stylesheet
-from exceptions import *
+from .stylesheet import Stylesheet
+from .exceptions import *
 
 
 class XSLTProcessor(object):

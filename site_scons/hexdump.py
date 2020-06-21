@@ -28,8 +28,8 @@ from SCons.Script import *
 
 
 def hexdump_action(target, source, env):
-	sizSkip = long(env['HEXDUMP_SKIPBYTES'], 0)
-	sizMax = long(env['HEXDUMP_MAXSIZE'], 0)
+	sizSkip = int(env['HEXDUMP_SKIPBYTES'], 0)
+	sizMax = int(env['HEXDUMP_MAXSIZE'], 0)
 
 	# Read the source data into an array.
 	strSourceData = source[0].get_contents()

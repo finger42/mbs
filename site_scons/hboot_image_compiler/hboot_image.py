@@ -20,6 +20,14 @@
 # *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
 # ***************************************************************************
 
+from __future__ import division
+from __future__ import print_function
+from __future__ import absolute_import
+from builtins import chr
+from builtins import str
+from builtins import range
+from builtins import object
+from past.utils import old_div
 import array
 import ast
 import base64
@@ -37,9 +45,9 @@ import xml.dom.minidom
 import xml.etree.ElementTree
 
 import elf_support
-import option_compiler
-import patch_definitions
-import snippet_library
+from . import option_compiler
+from . import patch_definitions
+from . import snippet_library
 
 
 class ResolveDefines(ast.NodeTransformer):
@@ -72,7 +80,7 @@ class ResolveDefines(ast.NodeTransformer):
         return tNode
 
 
-class HbootImage:
+class HbootImage(object):
     __fVerbose = False
 
     # This is the list of override items for the header.
@@ -156,7 +164,7 @@ class HbootImage:
         fOpensslRandOff = False
 
         # Parse the kwargs.
-        for strKey, tValue in iter(kwargs.items()):
+        for strKey, tValue in iter(list(kwargs.items())):
             if strKey == 'patch_definition':
                 strPatchDefinition = tValue
 
@@ -256,7 +264,7 @@ class HbootImage:
             if len(atKnownFiles) == 0:
                 print('[HBootImage] Configuration: No known files.')
             else:
-                for strKey, strPath in atKnownFiles.iteritems():
+                for strKey, strPath in list(atKnownFiles.items()):
                     print(
                         '[HBootImage] Configuration: '
                         'Known file "%s" at "%s".' % (
@@ -268,7 +276,7 @@ class HbootImage:
             if len(atGlobalDefines) == 0:
                 print('[HBootImage] Configuration: No defines.')
             else:
-                for strKey, strValue in atGlobalDefines.iteritems():
+                for strKey, strValue in list(atGlobalDefines.items()):
                     print(
                         '[HBootImage] Configuration: '
                         'Define %s=%s' % (
@@ -2198,12 +2206,12 @@ class HbootImage:
             # The SKIP chunk for SQI flash forwards the offset by the
             # argument - 1.
             if self.__strDevice == 'SQIROM':
-                sizSkip = (sizOffsetNew - sizOffsetCurrent) / 4
+                sizSkip = old_div((sizOffsetNew - sizOffsetCurrent), 4)
                 sizSkipParameter = (
                     sizOffsetNew - sizOffsetCurrent + 1 - self.__sizHashDw
                 )
             else:
-                sizSkip = (sizOffsetNew - sizOffsetCurrent) / 4
+                sizSkip = old_div((sizOffsetNew - sizOffsetCurrent), 4)
                 sizSkipParameter = sizSkip
 
         elif self.__strNetxType == 'NETX4000_RELAXED':
@@ -2216,13 +2224,13 @@ class HbootImage:
             # parallel NOR flashes are quite unusual in the netX4000 area.
             # That's why we can safely default to SQIROM here and ignore
             # the rest.
-            sizSkip = (sizOffsetNew - sizOffsetCurrent) / 4
+            sizSkip = old_div((sizOffsetNew - sizOffsetCurrent), 4)
             sizSkipParameter = (
                 sizOffsetNew - sizOffsetCurrent + 1 - self.__sizHashDw
             )
 
         else:
-            sizSkip = (sizOffsetNew - sizOffsetCurrent) / 4
+            sizSkip = old_div((sizOffsetNew - sizOffsetCurrent), 4)
             sizSkipParameter = sizSkip
 
         aulChunk = array.array('I')
@@ -2347,7 +2355,7 @@ class HbootImage:
 
     def __openssl_cut_in_half(self, aucData):
         # Cut the public key in equal parts.
-        sizDataHalf = len(aucData) / 2
+        sizDataHalf = old_div(len(aucData), 2)
         aucData0 = array.array('B', aucData[:sizDataHalf])
         aucData1 = array.array('B', aucData[sizDataHalf:])
         return aucData0, aucData1
@@ -2455,7 +2463,7 @@ class HbootImage:
             sizMod = len(aucMod)
             sizExp = len(aucExp)
             uiId = None
-            for uiElementId, atAttr in __atKnownRsaSizes.iteritems():
+            for uiElementId, atAttr in list(__atKnownRsaSizes.items()):
                 if (sizMod == atAttr['mod']) and (sizExp == atAttr['exp']):
                     # Found the RSA type.
                     if(
@@ -2478,7 +2486,7 @@ class HbootImage:
                         sizExp
                     )
                 )
-                for uiElementId, atAttr in __atKnownRsaSizes.iteritems():
+                for uiElementId, atAttr in list(__atKnownRsaSizes.items()):
                     strErr += (
                         '  RSA%d: %d bytes modulo, %d bytes public exponent\n' %
                         (atAttr['rsa'], atAttr['mod'], atAttr['exp'])
@@ -2533,8 +2541,8 @@ class HbootImage:
             tMatch = tReExp.search(strStdout)
             if tMatch is None:
                 raise Exception('Can not find cofactor!')
-            ulCofactor = long(tMatch.group(1))
-            ulCofactorHex = long(tMatch.group(2), 16)
+            ulCofactor = int(tMatch.group(1))
+            ulCofactorHex = int(tMatch.group(2), 16)
             if ulCofactor != ulCofactorHex:
                 raise Exception('Decimal version differs from hex version!')
 
@@ -2554,7 +2562,7 @@ class HbootImage:
             sizGy = len(aucGenY)
             sizN = len(aucOrder)
             uiId = None
-            for uiElementId, sizNumbers in __atKnownEccSizes.iteritems():
+            for uiElementId, sizNumbers in list(__atKnownEccSizes.items()):
                 if(
                     (sizNumbers == sizD) and
                     (sizNumbers == sizQx) and
@@ -3814,7 +3822,7 @@ class HbootImage:
             aucDevices.extend([0] * sizPadding)
 
             # Get the size of the data in DWORDs.
-            sizDataDW = len(aucDevices) / 4
+            sizDataDW = old_div(len(aucDevices), 4)
 
             aulChunk = array.array('I')
             aulChunk.append(self.__get_tag_id('M', 'D', 'U', 'P'))
@@ -3988,7 +3996,7 @@ class HbootImage:
                         raise Exception(
                             'Invalid target: "%s". Valid targets: %s' % (
                                 strTarget,
-                                ', '.join(atVal.keys())
+                                ', '.join(list(atVal.keys()))
                             )
                         )
                     __atCert['TargetInfoPage'] = uiTarget
@@ -4147,10 +4155,10 @@ class HbootImage:
             atData.extend([0] * sizPadding)
 
             if iKeyTyp_1ECC_2RSA == 1:
-                sizKeyInDwords = len(atAttr['Qx']) / 4
+                sizKeyInDwords = old_div(len(atAttr['Qx']), 4)
                 sizSignatureInDwords = 2 * sizKeyInDwords
             elif iKeyTyp_1ECC_2RSA == 2:
-                sizKeyInDwords = len(atAttr['mod']) / 4
+                sizKeyInDwords = old_div(len(atAttr['mod']), 4)
                 sizSignatureInDwords = sizKeyInDwords
 
             # Convert the padded data to an array.
@@ -4320,7 +4328,7 @@ class HbootImage:
                         raise Exception(
                             'Invalid target: "%s". Valid targets: %s' % (
                                 strTarget,
-                                ', '.join(atVal.keys())
+                                ', '.join(list(atVal.keys()))
                             )
                         )
                     __atData['TargetInfoPage'] = uiTarget
@@ -4376,10 +4384,10 @@ class HbootImage:
         iKeyTyp_1ECC_2RSA = __atData['Key']['iKeyTyp_1ECC_2RSA']
         atAttr = __atData['Key']['atAttr']
         if iKeyTyp_1ECC_2RSA == 1:
-            sizKeyInDwords = len(atAttr['Qx']) / 4
+            sizKeyInDwords = old_div(len(atAttr['Qx']), 4)
             sizSignatureInDwords = 2 * sizKeyInDwords
         elif iKeyTyp_1ECC_2RSA == 2:
-            sizKeyInDwords = len(atAttr['mod']) / 4
+            sizKeyInDwords = old_div(len(atAttr['mod']), 4)
             sizSignatureInDwords = sizKeyInDwords
 
         # The minimum size of the HTBL chunk is...
@@ -4411,8 +4419,8 @@ class HbootImage:
             if sizChunkMinimumInBytes > ulRequiredSizeInBytes:
                 raise Exception('The HashTable size has a minimum size of %d bytes, which exceeds the requested size of %d bytes.' % (sizChunkMinimumInBytes, ulRequiredSizeInBytes))
 
-            sizFillUpInDwords = (ulRequiredSizeInBytes - sizChunkMinimumInBytes) / 4
-        sizChunkMinimumSizeInDwords = sizChunkMinimumInBytes / 4
+            sizFillUpInDwords = old_div((ulRequiredSizeInBytes - sizChunkMinimumInBytes), 4)
+        sizChunkMinimumSizeInDwords = old_div(sizChunkMinimumInBytes, 4)
 
         uiPass = atParserState['uiPass']
         if uiPass == 0:
@@ -4670,7 +4678,7 @@ class HbootImage:
             )
 
         # Convert the offset in bytes to an offset in DWORDs.
-        ulOffsetInDwords = ulOffsetInBytes / 4
+        ulOffsetInDwords = old_div(ulOffsetInBytes, 4)
 
         aulChunk = array.array('I')
         aulChunk.append(self.__get_tag_id('N', 'E', 'X', 'T'))

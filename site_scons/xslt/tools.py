@@ -1,7 +1,12 @@
 #from xslt import XSLT_NAMESPACE
 #from core import XSLT_NAMESPACE
+from future import standard_library
+standard_library.install_aliases()
+from builtins import str
+from builtins import range
+from past.builtins import basestring
 from xslt.exceptions import *
-from StringIO import StringIO
+from io import StringIO
 import xml.dom
 
 class ClassInitializer(type):
@@ -122,11 +127,11 @@ def pushResult(value, result):
 			raise InvalidContent(value)
 			
 		if isinstance(result, StringIO):
-			result.write(unicode(value))
+			result.write(str(value))
 		elif result.nodeType == xml.dom.Node.ATTRIBUTE_NODE:
-			result.value += unicode(value)
+			result.value += str(value)
 		else:
-			result.data += unicode(value)
+			result.data += str(value)
 			
 		return result
 		
@@ -164,8 +169,8 @@ def pushResult(value, result):
 def safeUpdateDict(a, b):
 	"""Updates dict a preserving values for existing keys"""
 	
-	for (k, v) in b.iteritems():
-		if not a.has_key(k):
+	for (k, v) in b.items():
+		if k not in a:
 			a[k] = v
 			
 			
@@ -174,7 +179,7 @@ def combineOutput(output, newvalues):
 	as specified in [XSLT 16.0]."""
 	
 	# merge cdata-section-elements
-	if newvalues.has_key('cdata-section-elements') and output.has_key('cdata-section-elements'):
+	if 'cdata-section-elements' in newvalues and 'cdata-section-elements' in output:
 		newvalues['cdata-section-elements'].update(output['cdata-section-elements'])
 	
 	# cdata-section-elements is already a union of old and new values

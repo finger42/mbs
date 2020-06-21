@@ -20,6 +20,7 @@
 #-------------------------------------------------------------------------#
 
 
+from builtins import range
 import array
 
 from SCons.Script import *

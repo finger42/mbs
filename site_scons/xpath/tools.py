@@ -1,5 +1,8 @@
-from exceptions import *
-from axes import *
+from __future__ import absolute_import
+from future.utils import raise_
+from past.builtins import basestring
+from .exceptions import *
+from .axes import *
             
 def string_value(node):
     """Compute the string-value of a node."""
@@ -23,13 +26,13 @@ def string_value(node):
 def invoke(name, node, pos, size, context, *args):
     fn = context.functions.get(name)
     if fn is None:
-        raise XPathUnknownFunctionError, 'unknown function "%s()"' % name
+        raise_(XPathUnknownFunctionError, 'unknown function "%s()"' % name)
     return fn(node, pos, size, context, *args)
         
 def nodeset(v):
     """Convert a value to a nodeset."""
     if not nodesetp(v):
-        raise XPathTypeError, "value is not a node-set"
+        raise XPathTypeError("value is not a node-set")
     return v
 
 def nodesetp(v):

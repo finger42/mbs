@@ -1,7 +1,7 @@
+from __future__ import absolute_import
 from xpath.functions import function
 import xpath.tools
-import properties
-import core
+from .core import *
 import xml.dom
 
 @function(0, 0)

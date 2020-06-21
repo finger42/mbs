@@ -20,6 +20,8 @@
 #-------------------------------------------------------------------------#
 
 
+from __future__ import division
+from past.utils import old_div
 import array
 import os
 import string
@@ -28,8 +30,8 @@ from SCons.Script import *
 
 
 def dataarray_action(target, source, env):
-	sizBytesPerLine = long(env['DATAARRAY_BYTES_PER_LINE'])
-	sizElement = long(env['DATAARRAY_ELEMENT_SIZE'])
+	sizBytesPerLine = int(env['DATAARRAY_BYTES_PER_LINE'])
+	sizElement = int(env['DATAARRAY_ELEMENT_SIZE'])
 
 	if sizBytesPerLine<1:
 		raise Exception('Invalid number of bytes per row! This value must be greater than 0.')
@@ -50,7 +52,7 @@ def dataarray_action(target, source, env):
 		raise Exception('Invalid element size, must be 1, 2 or 4, but it is %d' % sizElement)
 	strPrintFormat = '0x%%0%dx' % (2*sizElement)
 
-	sizElementsPerLine = sizBytesPerLine / sizElement
+	sizElementsPerLine = old_div(sizBytesPerLine, sizElement)
 
 	# Get the array name.
 	if( (env['DATAARRAY_NAME'] is None) or ((not env['DATAARRAY_NAME'] is None) and len(env['DATAARRAY_NAME'])==0) ):
@@ -62,7 +64,7 @@ def dataarray_action(target, source, env):
 	sizFile = os.stat(source[0].get_path()).st_size
 	if (sizFile % sizElement)!=0:
 		raise Exception('The file size (%d) is no multiple of the selected element size (%d).' % (sizFile,sizElement))
-	sizArray = sizFile / sizElement
+	sizArray = old_div(sizFile, sizElement)
 
 	atSourceData = array.array(strArrayFormat)
 	tFileSource = open(source[0].get_path(), 'rb')

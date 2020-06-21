@@ -19,6 +19,7 @@
 #   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             #
 #-------------------------------------------------------------------------#
 
+from __future__ import print_function
 import os.path
 import shutil
 import string
@@ -53,7 +54,7 @@ def create_substitute_dict(aCfg, strMbsDir):
 
 
 def filter_file(aSubstitute, strDstPath, strSrcPath):
-	print 'Filter %s -> %s' % (strSrcPath, strDstPath)
+	print('Filter %s -> %s' % (strSrcPath, strDstPath))
 	
 	# Read the template.
 	src_file = open(strSrcPath, 'r')
@@ -85,7 +86,7 @@ def apply(aCfg):
 	strMbsDir = os.path.relpath(os.path.join(os.path.dirname(os.path.realpath(__file__)),'..'))
 
 	aSubstitute = create_substitute_dict(aCfg, strMbsDir)
-	for strDst,strSrc in aCfg['filter'].items():
+	for strDst,strSrc in list(aCfg['filter'].items()):
 		# Get the source file from the project folder.
 		strPrjSrc = os.path.join(strMbsDir, strSrc)
 		# Create the destination folder.

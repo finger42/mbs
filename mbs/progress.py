@@ -19,12 +19,16 @@
 #   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             #
 #-------------------------------------------------------------------------#
 
+from __future__ import division
+from __future__ import print_function
+from builtins import object
+from past.utils import old_div
 import time
 import sys
 
 
 
-class ProgressOutput:
+class ProgressOutput(object):
 	# This is the minimum time between 2 flushes in seconds.
 	m_tTimeMinimumFlushIntervall = 1.0
 	m_tTimeLastFlushTime = 0
@@ -48,14 +52,14 @@ class ProgressOutput:
 
 	def __init__(self, sizTotal):
 		# Set the size for one dot according to the total size.
-		print 'sizTotal',sizTotal
+		print('sizTotal',sizTotal)
 		if sizTotal==0:
 			# Unknown total size -> default to 2048.
 			m_sizDot = 2048
 		else:
 			# Try to get a maximum of 20 lines at a maximum of 1MB dots.
 			sizMaxLines = 20
-			sizDot = sizTotal / self.m_uiDotsPerLine / sizMaxLines
+			sizDot = old_div(old_div(sizTotal, self.m_uiDotsPerLine), sizMaxLines)
 			if sizDot>1024*1024:
 				sizDot = 1024*1024
 			elif sizDot<2048:
@@ -79,7 +83,7 @@ class ProgressOutput:
 				# Only print the percent information if the total size is known.
 				if self.m_sizTotal!=0:
 					# Get the new percentage.
-					uiPercent = 100.0 * self.m_sizCurrent / self.m_sizTotal
+					uiPercent = old_div(100.0 * self.m_sizCurrent, self.m_sizTotal)
 					sys.stdout.write('% 3d%% ' % uiPercent)
 				else:
 					sys.stdout.write('     ')
@@ -95,7 +99,7 @@ class ProgressOutput:
 			# Get the number of bytes in this line.
 			sizDotBytes = sizLineEnd - self.m_uiLinePositionStart
 			# Get the number of new dots in this line. 
-			sizDots = int(sizDotBytes/self.m_sizDot) - self.m_uiDotsPrintedInCurrentLine
+			sizDots = int(old_div(sizDotBytes,self.m_sizDot)) - self.m_uiDotsPrintedInCurrentLine
 			# Print the new dots.
 			sys.stdout.write('.'*sizDots)
 			# Update the number of dots printed in this line.
@@ -140,7 +144,7 @@ def _tst(sizTotal, *args):
 
 
 if __name__ == "__main__":
-	print '10 dots with 1 second delay'
+	print('10 dots with 1 second delay')
 	_tst(20480, (2048, 1), (2048, 1),(2048, 1),(2048, 1),(2048, 1),(2048, 1),(2048, 1),(2048, 1),(2048, 1),(2048, 1))
 	
 	_tst(20480, (2048, 1), (4096, 2), (2048, 1),(2048, 1),(2048, 1),(2048, 1),(2048, 1),(2048, 1),(2048, 1))

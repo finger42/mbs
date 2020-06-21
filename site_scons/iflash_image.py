@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 
+from builtins import str
 import hboot_image_compiler.netx90_app_iflash_image
 
 import os.path

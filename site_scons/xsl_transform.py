@@ -19,6 +19,7 @@
 #   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             #
 #-------------------------------------------------------------------------#
 
+from __future__ import print_function
 import xslt
 
 import re
@@ -55,7 +56,7 @@ def xslt_action(target, source, env):
 	
 	# Show all messages.
 	for strMsg in astrMsgs:
-		print '[MSG]: %s' % strMsg
+		print('[MSG]: %s' % strMsg)
 	
 	# Write the transformed data to the target file.
 	file_target = open(target[0].get_path(), 'wt')

@@ -20,6 +20,7 @@
 #-------------------------------------------------------------------------#
 
 
+from __future__ import print_function
 iMinimumInterpreterVersion_maj = 2
 iMinimumInterpreterVersion_min = 6
 
@@ -77,7 +78,7 @@ clean_orphaned_pyc.cleanup(os.getcwd(), True, False)
 
 # Run Scons (use aCfg['scons'] to get the path. All archives *must* create a folder with the name
 # '%s-%s'%(strName,strVersion) and have a 'scons.py' there.
-print 'Running scons (%s)' % aCfg['scons_path']
+print('Running scons (%s)' % aCfg['scons_path'])
 sys.stdout.flush()
 sys.stderr.flush()
 astrArguments = [sys.executable, aCfg['scons_path']]

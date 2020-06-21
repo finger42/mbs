@@ -20,6 +20,10 @@
 #-------------------------------------------------------------------------#
 
 
+from __future__ import division
+from builtins import range
+from past.builtins import basestring
+from past.utils import old_div
 from SCons.Script import *
 
 import elf_support
@@ -72,11 +76,11 @@ def string_to_number(strNumber):
 	match_obj = re.match("[ \t]*0[xX]([0-9a-fA-F]+)", strNumber)
 	if match_obj:
 		# Convert C hex string to number.
-		number = long(match_obj.group(1), 16)
+		number = int(match_obj.group(1), 16)
 	else:
 		# Try the normal decimal syntax.
 		try:
-			number = long(strNumber)
+			number = int(strNumber)
 		except ValueError:
 			number = None
 	return number
@@ -169,7 +173,7 @@ def bootblock_action(target, source, env):
 			uiPadBytes = 4 - uiPadBytes
 			strBinFile += '\0' * uiPadBytes
 		# Get the size of the evetually padded data.
-		ulApplicationDwordSize = len(strBinFile) / 4;
+		ulApplicationDwordSize = old_div(len(strBinFile), 4);
 		aulApplicationData = array.array('I')
 		aulApplicationData.fromstring(strBinFile)
 		
@@ -234,9 +238,9 @@ def bootblock_action(target, source, env):
 	
 	# Apply source options.
 	if isinstance(env['BOOTBLOCK_SRC'], dict):
-		for offset,value in env['BOOTBLOCK_SRC'].iteritems():
-			uiOffset = long(offset)
-			ulValue = long(value)
+		for offset,value in list(env['BOOTBLOCK_SRC'].items()):
+			uiOffset = int(offset)
+			ulValue = int(value)
 			if uiOffset<0 or uiOffset>16:
 				raise Exception('invalid offset in BOOTBLOCK_SRC parameters: %s' % uiOffset)
 			aBootBlock[uiOffset] = ulValue
@@ -249,9 +253,9 @@ def bootblock_action(target, source, env):
 	
 	# Apply destination options.
 	if isinstance(env['BOOTBLOCK_DST'], dict):
-		for offset,value in env['BOOTBLOCK_DST'].iteritems():
-			uiOffset = long(offset)
-			ulValue = long(value)
+		for offset,value in list(env['BOOTBLOCK_DST'].items()):
+			uiOffset = int(offset)
+			ulValue = int(value)
 			if uiOffset<0 or uiOffset>16:
 				raise Exception('invalid offset in BOOTBLOCK_DST parameters: %s' % uiOffset)
 			aBootBlock[uiOffset] = ulValue

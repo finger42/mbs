@@ -1,4 +1,10 @@
 from __future__ import division
+from __future__ import absolute_import
+from builtins import zip
+from builtins import str
+from builtins import range
+from past.builtins import basestring
+from builtins import object
 from itertools import *
 import math
 import operator
@@ -6,8 +12,8 @@ import xml.dom
 import weakref
 
 from xpath.exceptions import *
-from tools import *
-from axes import *
+from .tools import *
+from .axes import *
 
 
 #
@@ -147,7 +153,7 @@ class EqualityExpr(BinaryOperatorExpr):
         else:
             convert = 'number'
 
-        a, b = map(lambda x: invoke(convert, node, pos, size, context, x), (a,b))
+        a, b = [invoke(convert, node, pos, size, context, x) for x in (a,b)]
         return self.operators[self.op](a, b)
 
 def divop(x, y):
@@ -213,7 +219,7 @@ class LiteralExpr(Expr):
                 return '"%s"' % self.literal
             else:
                 return "'%s'" % self.literal
-        return unicode(self.literal)
+        return str(self.literal)
 
 class VariableReference(Expr):
     """Variable references."""
@@ -333,7 +339,7 @@ class PathExpr(Expr):
         # resulting from the previous step.
         for step in self.steps[1:]:
             aggregate = []
-            for i in xrange(len(result)):
+            for i in range(len(result)):
                 nodes = step.evaluate(result[i], i+1, len(result), context)
                 if not nodesetp(nodes):
                     raise XPathTypeError("path step is not a node-set")
@@ -367,7 +373,7 @@ class PredicateList(Expr):
 
         for pred in self.predicates:
             match = []
-            for i, node in izip(count(1), result):
+            for i, node in zip(count(1), result):
                 r = pred.evaluate(node, i, len(result), context)
 
                 # If a predicate evaluates to a number, select the node

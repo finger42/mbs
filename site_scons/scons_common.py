@@ -20,6 +20,8 @@
 # ----------------------------------------------------------------------- #
 
 
+from __future__ import print_function
+from builtins import str
 import atexit
 import imp
 import os
@@ -94,7 +96,7 @@ def find_first_tool(strToolPattern):
     strToolName = None
 
     tPattern = re.compile(strToolPattern)
-    for strKey in SCons.Script.TOOLS.iterkeys():
+    for strKey in list(SCons.Script.TOOLS.keys()):
         tMatch = re.search(tPattern, strKey)
         if tMatch is not None:
             strToolName = strKey
@@ -231,8 +233,8 @@ def create_compiler_environment(
     aCmd = [env['CC']]
     aCmd.extend(aOptAttributesCommon)
     aCmd.append('-print-multi-lib')
-    proc = subprocess.Popen(aCmd, stdout=subprocess.PIPE)
-    strOutput = proc.communicate()[0]
+    proc = subprocess.Popen(aCmd, stdout=subprocess.PIPE, universal_newlines=True)
+    strOutput = str(proc.communicate()[0])
     for match_obj in re.finditer(
         '^([^;]+);@?([^\r\n\t ]+)',
         strOutput,

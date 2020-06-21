@@ -60,7 +60,7 @@ def zip_emitter(target, source, env):
 	if env['ZIP_PATH_TRANSLATE']!=None:
 		aTranslate = []
 		
-		for (tFile,strPath) in env['ZIP_PATH_TRANSLATE'].items():
+		for (tFile,strPath) in list(env['ZIP_PATH_TRANSLATE'].items()):
 			aTranslate.append('%s:%s'%(tFile.get_path(),strPath))
 		
 		for strDep in sorted(aTranslate):

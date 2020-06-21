@@ -1,4 +1,8 @@
-from StringIO import StringIO
+from future import standard_library
+standard_library.install_aliases()
+from builtins import range
+from builtins import object
+from io import StringIO
 import xml.dom
 from xml.sax.saxutils import quoteattr, escape
 
@@ -12,15 +16,15 @@ class XMLSerializer(object):
 		if self.output.get('omit-xml-declaration') != True:
 			s.write('<?xml')
 			s.write(' version="%s"' % self.output.get('version', '1.0'))
-			if self.output.has_key('encoding'):
+			if 'encoding' in self.output:
 				s.write(' encoding="%s"' % self.output.get('encoding'))
-			if self.output.has_key('standalone'):
+			if 'standalone' in self.output:
 				s.write(' standalone="%s"' % ('yes' if self.output.get('standalone') else 'no'))
 			s.write('?>')
 			
-		if self.output.has_key('doctype-system'):
+		if 'doctype-system' in self.output:
 			s.write('<!DOCTYPE %s' % frag.firstChild.nodeName)
-			if self.output.has_key('doctype-public'):
+			if 'doctype-public' in self.output:
 				s.write(' PUBLIC %s %s' % (self.output.get('doctype-public'), self.output.get('doctype-system')))
 			else:
 				s.write(' SYSTEM %s' % self.output.get('doctype-system'))

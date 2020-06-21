@@ -26,6 +26,13 @@
 # No String datatype in concat.
 # One or two data blocks
 
+from __future__ import division
+from __future__ import print_function
+from builtins import chr
+from builtins import str
+from builtins import range
+from builtins import object
+from past.utils import old_div
 import argparse
 import array
 import base64
@@ -49,7 +56,7 @@ if __name__ != '__main__':
     import SCons.Script
 
 
-class AppImage:
+class AppImage(object):
     # This is the environment.
     __tEnv = None
 
@@ -128,15 +135,15 @@ class AppImage:
     # mark all segments of an ELF file as used
     def segments_mark_used_all(self, strElfPath):
         tSegments = self.segments_get_elf_segments(strElfPath)
-        for tSegment in tSegments.values():
+        for tSegment in list(tSegments.values()):
             tSegment['used'] = True
         
     
     # check if there are any unused segments which contain data
     def segments_check_unused(self):
         fUnusedSegments = False
-        for strElfPath, tSegments in self.__tElfSegments.items():
-            for tSegment in tSegments.values():
+        for strElfPath, tSegments in list(self.__tElfSegments.items()):
+            for tSegment in list(tSegments.values()):
                 if tSegment['used'] != True:
                     if tSegment['size'] == 0:
                         print("Info: Unused empty segment '%s' in %s" % (tSegment['name'], strElfPath))
@@ -675,7 +682,7 @@ class AppImage:
 
     def __openssl_cut_in_half(self, aucData):
         # Cut the public key in equal parts.
-        sizDataHalf = len(aucData) / 2
+        sizDataHalf = old_div(len(aucData), 2)
         aucData0 = array.array('B', aucData[:sizDataHalf])
         aucData1 = array.array('B', aucData[sizDataHalf:])
         return aucData0, aucData1
@@ -784,7 +791,7 @@ class AppImage:
             sizMod = len(aucMod)
             sizExp = len(aucExp)
             uiId = None
-            for uiElementId, atAttr in __atKnownRsaSizes.iteritems():
+            for uiElementId, atAttr in list(__atKnownRsaSizes.items()):
                 if (sizMod == atAttr['mod']) and (sizExp == atAttr['exp']):
                     uiId = uiElementId + 1
                     break
@@ -799,7 +806,7 @@ class AppImage:
                         sizExp
                     )
                 )
-                for uiElementId, atAttr in __atKnownRsaSizes.iteritems():
+                for uiElementId, atAttr in list(__atKnownRsaSizes.items()):
                     strErr += (
                         '  RSA%d: %d bytes modulo, %d bytes public exponent\n' %
                         (atAttr['rsa'], atAttr['mod'], atAttr['exp'])
@@ -854,8 +861,8 @@ class AppImage:
             tMatch = tReExp.search(strStdout)
             if tMatch is None:
                 raise Exception('Can not find cofactor!')
-            ulCofactor = long(tMatch.group(1))
-            ulCofactorHex = long(tMatch.group(2), 16)
+            ulCofactor = int(tMatch.group(1))
+            ulCofactorHex = int(tMatch.group(2), 16)
             if ulCofactor!=ulCofactorHex:
                 raise Exception('Decimal version differs from hex version!')
 
@@ -875,7 +882,7 @@ class AppImage:
             sizGy = len(aucGenY)
             sizN = len(aucOrder)
             uiId = None
-            for uiElementId, sizNumbers in __atKnownEccSizes.iteritems():
+            for uiElementId, sizNumbers in list(__atKnownEccSizes.items()):
                 if(
                     (sizNumbers == sizD) and
                     (sizNumbers == sizQx) and
@@ -1017,10 +1024,10 @@ class AppImage:
         iKeyTyp_1ECC_2RSA = __atCert['Key']['iKeyTyp_1ECC_2RSA']
         atAttr = __atCert['Key']['atAttr']
         if iKeyTyp_1ECC_2RSA == 1:
-            sizKeyInDwords = len(atAttr['Qx']) / 4
+            sizKeyInDwords = old_div(len(atAttr['Qx']), 4)
             sizSignatureInDwords = 2 * sizKeyInDwords
         elif iKeyTyp_1ECC_2RSA == 2:
-            sizKeyInDwords = len(atAttr['mod']) / 4
+            sizKeyInDwords = old_div(len(atAttr['mod']), 4)
             sizSignatureInDwords = sizKeyInDwords
 
         # The size of the ASIG thing without the signature is...
@@ -1500,7 +1507,7 @@ def __get_clean_known_files(atKnownFiles):
     atClean = {}
 
     # Iterate over all known files.
-    for strKey, tFile in atKnownFiles.items():
+    for strKey, tFile in list(atKnownFiles.items()):
         # The file must be either a string, a SCons.Node.FS.File object or a
         # SCons.Node.NodeList object.
         if isinstance(tFile, str):
@@ -1569,7 +1576,7 @@ def __app_image_emitter(target, source, env):
         atKnownFiles = env['APPIMAGE_KNOWN_FILES']
         if atKnownFiles is not None:
             atKnownFiles = __get_clean_known_files(atKnownFiles)
-            for strId, strPath in atKnownFiles.items():
+            for strId, strPath in list(atKnownFiles.items()):
                 env.Depends(
                     target,
                     env.File(strPath)

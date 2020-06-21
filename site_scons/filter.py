@@ -44,7 +44,7 @@ def filter_action(target, source, env):
     dst_newtxt = tTemplate.safe_substitute(atSubstitutions)
 
     # Replace @ID@.
-    for strKey, tValue in atSubstitutions.items():
+    for strKey, tValue in list(atSubstitutions.items()):
         dst_newtxt = string.replace(dst_newtxt, '@%s@' % strKey, tValue)
 
     # Write the target file only if the current text differs from the file
@@ -63,7 +63,7 @@ def filter_emitter(target, source, env):
         atSubstitutions = {}
 
     # Loop over all replacements and add them to the dependencies.
-    for strKey, tValue in atSubstitutions.items():
+    for strKey, tValue in list(atSubstitutions.items()):
         env.Depends(
             target,
             SCons.Node.Python.Value('%s:%s' % (strKey, tValue))

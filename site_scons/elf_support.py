@@ -21,6 +21,8 @@
 # ***************************************************************************
 
 
+from __future__ import print_function
+from builtins import str
 import os
 import re
 import subprocess
@@ -156,7 +158,7 @@ def get_debug_structure(env, strFileName):
                     tNode['attributes'][strName] = strValue
 
     time_end = datetime.datetime.now()
-    print('Time used:', str(time_end-time_start))
+    print(('Time used:', str(time_end-time_start)))
 
 #    # Write the XML tree to a test file.
 #    astrXml = xml.etree.ElementTree.tostringlist(tXml.getroot(), encoding='UTF-8', method="xml")
@@ -254,7 +256,7 @@ def get_macro_definitions(env, strFileName):
                     atMergedMacros[strName] = strValue
 
     time_end = datetime.datetime.now()
-    print('Time used:', str(time_end-time_start))
+    print(('Time used:', str(time_end-time_start)))
 
     return atMergedMacros
 
@@ -311,10 +313,10 @@ def get_exec_address(env, strElfFileName):
             tResult = int(match_obj.group(1), 16)
         else:
             print('Failed to extract start address.')
-            print('Command0:', aCmd0)
-            print('Output0:', strOutput0)
-            print('Command1:', aCmd1)
-            print('Output1:', strOutput1)
+            print(('Command0:', aCmd0))
+            print(('Output0:', strOutput0))
+            print(('Command1:', aCmd1))
+            print(('Output1:', strOutput1))
             raise Exception('Failed to extract start address.')
 
     return tResult

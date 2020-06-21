@@ -20,6 +20,9 @@
 # *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
 # ***************************************************************************
 
+from builtins import chr
+from builtins import range
+from builtins import object
 import ast
 import string
 import xml.dom.minidom
@@ -30,7 +33,7 @@ import xml.dom.minidom
 #
 
 
-class OptionCompiler:
+class OptionCompiler(object):
     # This is a list of the compiled options.
     __strOptions = None
 

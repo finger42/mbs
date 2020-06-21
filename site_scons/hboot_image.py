@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
 
 
+from builtins import str
+from past.builtins import basestring
 import hboot_image_compiler.hboot_image
 
-from types import ListType
+from types import *
 import os.path
 
 import SCons.Script
@@ -13,7 +15,7 @@ def __get_clean_known_files(atKnownFiles):
     atClean = {}
 
     # Iterate over all known files.
-    for strKey, tFile in atKnownFiles.items():
+    for strKey, tFile in list(atKnownFiles.items()):
         # The file must be either a string, a SCons.Node.FS.File object or a
         # SCons.Node.NodeList object.
         if isinstance(tFile, basestring):
@@ -206,7 +208,7 @@ def __hboot_image_emitter(target, source, env):
         atKnownFiles = env['HBOOTIMAGE_KNOWN_FILES']
         if atKnownFiles is not None:
             atKnownFiles = __get_clean_known_files(atKnownFiles)
-            for strId, strPath in atKnownFiles.items():
+            for strId, strPath in list(atKnownFiles.items()):
                 # NOTE: Only add the reference here as a string.
                 # The source scanner will check if this reference is really
                 # used.
@@ -245,7 +247,7 @@ def __hboot_image_emitter(target, source, env):
     if 'HBOOTIMAGE_DEFINES' in env:
         atDefines = env['HBOOTIMAGE_DEFINES']
         if atDefines is not None:
-            for strKey, tValue in atDefines.items():
+            for strKey, tValue in list(atDefines.items()):
                 env.Depends(
                     target,
                     SCons.Node.Python.Value(
