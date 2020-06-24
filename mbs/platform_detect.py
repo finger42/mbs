@@ -69,11 +69,11 @@ class PlatformDetect(object):
         strCpuArchitecture = None
 
         # Try to parse the output of the 'getconf LONG_BIT' command.
-        strOutput = subprocess.check_output(['getconf', 'LONG_BIT'])
-        strOutputStrip = strOutput.strip()
-        if strOutputStrip == '32':
+        strOutput = str(subprocess.check_output(['getconf', 'LONG_BIT']))
+
+        if '32' in strOutput:
             strCpuArchitecture = 'x86'
-        elif strOutputStrip == '64':
+        elif '64' in strOutput:
             strCpuArchitecture = 'x86_64'
 
         return strCpuArchitecture
@@ -84,16 +84,19 @@ class PlatformDetect(object):
             'i386': 'x86',
             'i486': 'x86',
             'i586': 'x86',
-            'i686': 'x86'
+            'i686': 'x86',
+            'x86_64': 'x86_64'
         }
 
         # Try to parse the output of the 'lscpu' command.
         strOutput = str(subprocess.check_output(['lscpu']))
-        tMatch = re.search('Archit([a-z]+): *(\S+)', strOutput)
+        tMatch = re.search('Archite([a-z])tur?: *(\S+)', strOutput)
         if tMatch is None:
             raise Exception('Failed to get the CPU architecture with "lscpu".')
 
-        strCpuArchitecture = tMatch.group(1)
+        strCpuArchitecture = tMatch.group(2)
+        strCpuArchitecture = strCpuArchitecture.split('\\n')[0]
+
         # Replace the CPU architectures found in the list.
         if strCpuArchitecture in astrReplacements:
             strCpuArchitecture = astrReplacements[strCpuArchitecture]
